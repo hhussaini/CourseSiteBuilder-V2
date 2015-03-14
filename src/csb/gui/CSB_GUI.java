@@ -792,7 +792,7 @@ public class CSB_GUI implements CourseDataView {
         });
         exportSiteButton.setOnAction(e -> {
             fileController.handleExportCourseRequest(this);
-            progressTest(theStage, dataManager.getCourse());
+           // progressTest(theStage, dataManager.getCourse());
         });
         exitButton.setOnAction(e -> {
             fileController.handleExitRequest(this);
@@ -1027,44 +1027,40 @@ public class CSB_GUI implements CourseDataView {
     Button button;
     Label processLabel;
     int numTasks = 0;
-    ReentrantLock progressLock;
     Stage theStage = new Stage();
-    
+    int index = 1;
     
     private void progressTest(Stage theStage, Course courseToExport) 
     {
-   
-    
-    progressLock = new ReentrantLock();
-    VBox box = new VBox();
 
-    HBox toolbar = new HBox();
-    bar = new ProgressBar(0);      
-    indicator = new ProgressIndicator(0);
-    toolbar.getChildren().add(bar);
-    toolbar.getChildren().add(indicator);
+        VBox box = new VBox();
+
+        HBox toolbar = new HBox();
+        bar = new ProgressBar(0);      
+        indicator = new ProgressIndicator(0);
+        indicator.setStyle("font-size: 36pt");
+        toolbar.getChildren().add(bar);
+        toolbar.getChildren().add(indicator);
         
-    button = new Button("Restart");
+        
         processLabel = new Label();
         processLabel.setFont(new Font("Serif", 36));
         box.getChildren().add(toolbar);
-        box.getChildren().add(button);
+       
         box.getChildren().add(processLabel);
         
         Scene scene = new Scene(box);
-        primaryStage.setScene(scene);
+        theStage.setScene(scene);
 
-        button.setOnAction(e -> {
+       // button.setOnAction(e -> {
                 Task<Void> task = new Task<Void>() {
                     int task = numTasks++;
-                    double max = 200;
+                    double max = courseToExport.getPages().size();
                     double perc;
                     @Override
                     protected Void call() throws Exception {
-                        try {
-                            progressLock.lock();
-                        for (int i = 0; i < 200; i++) {
-                            System.out.println(i);
+                        for (int i = 0; i < max; i++) {
+                           
                             perc = i/max;
                             
                             // THIS WILL BE DONE ASYNCHRONOUSLY VIA MULTITHREADING
@@ -1073,44 +1069,37 @@ public class CSB_GUI implements CourseDataView {
                                 public void run() {
                                     bar.setProgress(perc);
                                     indicator.setProgress(perc);
-                                    processLabel.setText("Task #" + task);
+                                    processLabel.setText("Exporting " + courseToExport.getPages().get(index-1).toString());
+                                    index++;
                                 }
                             });
 
                             // SLEEP EACH FRAME
-                            //try {
-                                Thread.sleep(10);
-                           // } catch (InterruptedException ie) {
-                          //      ie.printStackTrace();
-                          //  }
-                        }}
-                        finally {
-                                progressLock.unlock();
-                                }
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException ie) {
+                                ie.printStackTrace();
+                            }
+                        }
                         return null;
                     }
                 };
                 // THIS GETS THE THREAD ROLLING
                 Thread thread = new Thread(task);
-                thread.start();            
-        });        
-        primaryStage.show();
+                thread.start();
+                task.setOnSucceeded(e -> {
+                    
+                    fileController.handleExportCourseRequest(this);
+                    theStage.hide();
+                }
+                
+                
+                
+                );
+       // });        
+        theStage.show();
     
     
     
 }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
 }
