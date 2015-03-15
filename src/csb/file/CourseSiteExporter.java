@@ -371,7 +371,7 @@ public class CourseSiteExporter {
 
             // NOW ADD ALL THE DAYS    
             Element dowRowElement = scheduleDoc.createElement(HTML.Tag.TR.toString());
-            int lectureNumber = 1;
+            
             // MONDAY - FRIDAY
             for (int i = 0; i < 5; i++) {
                 // FIRST ADD THE DAY, GIVING IT AN ID OF THE DATE ITSELF
@@ -407,24 +407,28 @@ public class CourseSiteExporter {
                 List<DayOfWeek> lectureList = courseToExport.getLectureDays();
                 List<Lecture> lectures = courseToExport.getLectures();
                 
-                
+                                
                 if (!lectures.isEmpty())
                 {
-                    if (lectures.get(i).getSessions() == 0)
+                    int sessionNum = lectures.get(0).getSessions();
+                
+                    if (sessionNum == 0)
                     {
-                        lectures.remove(lectures.get(i));
+                        lectures.remove(lectures.get(0));
                     }
-                                       
-                    if (lectureList.get(i) == countingDate.getDayOfWeek())
+                    
+                    if (lectureList.contains(countingDate.getDayOfWeek()))
                     {
-                        if (lectures.get(i).getSessions() != 0)
+                        if (sessionNum != 0)
                         {
-                            Element lectureCell = addLectureCell(scheduleDoc, dowRowElement, courseToExport, lectureNumber);
+                            Element lectureCell = addLectureCell(scheduleDoc, dowRowElement, lectureCounter);
         
                             // ADD THE TEXT TO THE LINK
-                            Text lectureText = scheduleDoc.createTextNode(lectures.get(i).getTopic());
+                            Text lectureText = scheduleDoc.createTextNode(lectures.get(0).getTopic());
                             lectureCell.appendChild(lectureText);
-                            lectures.get(i).setSessions(lectures.get(i).getSessions()-1);
+                            lectures.get(0).setSessions(sessionNum-1);
+                            lectureCell.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_SCH);
+                            lectureCounter++;
                         }
                    
                     }
@@ -588,11 +592,12 @@ public class CourseSiteExporter {
     }
     
     
-    private Element addLectureCell(Document scheduleDoc, Element tableRow, Course courseToExport, int x)
+    private Element addLectureCell(Document scheduleDoc, Element tableRow, int x)
     {
         // MAKE THE TABLE CELL FOR THIS DATE
         Element lectureCell = scheduleDoc.createElement(HTML.Tag.TD.toString());
-        lectureCell.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_SCH);        
+        lectureCell.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_SCH);
+        lectureCell.setAttribute(HTML.Attribute.ID.toString(), "Lecture " + x);
         tableRow.appendChild(lectureCell);
 
         
@@ -611,16 +616,12 @@ public class CourseSiteExporter {
     
     private void fillHomeworkTable(Document hwsDoc, Course courseToExport) 
     {
-        
-        
-        
+               
         Node table = getNodeWithClass(hwsDoc, HTML.Tag.TABLE.toString(), CLASS_HWS);
         
         int r = 240;
         int g = 240;
         int b = 255;
-        
-        
         
         List<Assignment> assignments = courseToExport.getAssignments();
         
@@ -688,9 +689,7 @@ public class CourseSiteExporter {
         return null;
     }
   
-    
-    
-    
-    
+   
+        
     
 }
