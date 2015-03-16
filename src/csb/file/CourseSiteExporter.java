@@ -460,11 +460,7 @@ public class CourseSiteExporter {
                        
                     }
                     
-                    
-                    
-                    
-                    
-                    
+                   
                 }
                 
                // FIRST SCHEDULE ITEMS
@@ -670,41 +666,70 @@ public class CourseSiteExporter {
             String color = "background-color:rgb(" + r + "," + g + "," + b + ")";
             Element row = hwsDoc.createElement(HTML.Tag.TR.toString());
             
-            
             Element hwCell = hwsDoc.createElement(HTML.Tag.TD.toString());
+            
+            Element brElement = hwsDoc.createElement(HTML.Tag.BR.toString());
+            hwCell.appendChild(brElement);
+            
             hwCell.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_HWS);
             // AND PUT THE TEXT INSIDE
             Text hwNumberText = hwsDoc.createTextNode(assignments.get(i).getName() + " - " + assignments.get(i).getTopics());
             hwCell.appendChild(hwNumberText);
             
-            Element brElement = hwsDoc.createElement(HTML.Tag.BR.toString());
-            hwCell.appendChild(brElement);
+            Element brElement1 = hwsDoc.createElement(HTML.Tag.BR.toString());
+            hwCell.appendChild(brElement1);
             
-            Text hwInfoText = hwsDoc.createTextNode(assignments.get(i).getName());
-            hwCell.appendChild(hwInfoText);
+            Element brElement7 = hwsDoc.createElement(HTML.Tag.BR.toString());
+            hwCell.appendChild(brElement7);
        
             row.appendChild(hwCell);
             
             
             Element dateCell = hwsDoc.createElement(HTML.Tag.TD.toString());
+            
+            Element brElement2 = hwsDoc.createElement(HTML.Tag.BR.toString());
+            dateCell.appendChild(brElement2);
+            
+            
             dateCell.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_HWS);
             // AND PUT THE TEXT INSIDE
             Text hwDateText = hwsDoc.createTextNode(assignments.get(i).getDate().getDayOfWeek().toString() + ", " + assignments.get(i).getDate().getMonthValue() + "/" + assignments.get(i).getDate().getDayOfMonth() + "@ 11:59PM");
             dateCell.appendChild(hwDateText);
                       
+            Element brElement3 = hwsDoc.createElement(HTML.Tag.BR.toString());
+            dateCell.appendChild(brElement3);
+            
+            Element brElement8 = hwsDoc.createElement(HTML.Tag.BR.toString());
+            dateCell.appendChild(brElement8);
+            
+            
             row.appendChild(dateCell);
             
             Element criteriaCell = hwsDoc.createElement(HTML.Tag.TD.toString());
+            
+            Element brElement4 = hwsDoc.createElement(HTML.Tag.BR.toString());
+            criteriaCell.appendChild(brElement4);
+            
             criteriaCell.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_HWS);
             // AND PUT THE TEXT INSIDE
             Text criteriaText = hwsDoc.createTextNode("TBD");
             criteriaCell.appendChild(criteriaText);
                         
+            Element brElement5 = hwsDoc.createElement(HTML.Tag.BR.toString());
+            criteriaCell.appendChild(brElement5);
+            
+            Element brElement9 = hwsDoc.createElement(HTML.Tag.BR.toString());
+            criteriaCell.appendChild(brElement9);
+            
+            
             row.appendChild(criteriaCell);
+                        
             row.setAttribute(HTML.Attribute.STYLE.toString(), color);
             
             
             table.appendChild(row);
+            
+            
             
             r -= 10;
             g -= 10;
