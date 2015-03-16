@@ -791,8 +791,8 @@ public class CSB_GUI implements CourseDataView {
             fileController.handleSaveCourseRequest(this, dataManager.getCourse());
         });
         exportSiteButton.setOnAction(e -> {
-            fileController.handleExportCourseRequest(this);
-           // progressTest(theStage, dataManager.getCourse());
+            //fileController.handleExportCourseRequest(this);
+            progressTest(theStage, dataManager.getCourse());
         });
         exitButton.setOnAction(e -> {
             fileController.handleExitRequest(this);
@@ -1081,7 +1081,9 @@ public class CSB_GUI implements CourseDataView {
                                 ie.printStackTrace();
                             }
                         }
+                        index = 1;
                         return null;
+                        
                     }
                 };
                 // THIS GETS THE THREAD ROLLING
