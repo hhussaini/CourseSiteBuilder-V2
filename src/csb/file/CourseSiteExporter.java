@@ -626,8 +626,12 @@ public class CourseSiteExporter {
     {
         // MAKE THE TABLE CELL FOR THIS DATE
         //Element lectureCell = scheduleDoc.createElement(HTML.Tag.TD.toString());
-        dayCell.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_LECTURE);
-        dayCell.setAttribute(HTML.Attribute.ID.toString(), "Lecture " + x);
+        dayCell.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_SCH);
+        //dayCell.setAttribute(HTML.Attribute.ID.toString(), "Lecture " + x);
+        Element lectureCell = scheduleDoc.createElement(HTML.Tag.SPAN.toString());
+        lectureCell.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_LECTURE);
+        lectureCell.setAttribute(HTML.Attribute.ID.toString(), "Lecture " + x);
+        dayCell.appendChild(lectureCell);
         tableRow.appendChild(dayCell);
 
         
@@ -637,7 +641,7 @@ public class CourseSiteExporter {
 
         // AND PUT THE TEXT INSIDE
         Text lectureNumberText = scheduleDoc.createTextNode("Lecture " + x);
-        dayCell.appendChild(lectureNumberText);
+        lectureCell.appendChild(lectureNumberText);
         
         
         Element brElement = scheduleDoc.createElement(HTML.Tag.BR.toString());
@@ -758,7 +762,12 @@ public class CourseSiteExporter {
         // MAKE THE TABLE CELL FOR THIS DATE
         //Element lectureCell = scheduleDoc.createElement(HTML.Tag.TD.toString());
         dayCell.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_SCH);
-        dayCell.setAttribute(HTML.Attribute.ID.toString(), assignments.get(x).getName());
+        //dayCell.setAttribute(HTML.Attribute.ID.toString(), assignments.get(x).getName());
+        Element assignmentCell = scheduleDoc.createElement(HTML.Tag.SPAN.toString());
+        assignmentCell.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_HW);
+        assignmentCell.setAttribute(HTML.Attribute.ID.toString(), assignments.get(x).getName());
+        dayCell.appendChild(assignmentCell);
+        
         tableRow.appendChild(dayCell);
 
         
@@ -768,7 +777,7 @@ public class CourseSiteExporter {
 
         // AND PUT THE TEXT INSIDE
         Text assignmentNumberText = scheduleDoc.createTextNode(assignments.get(x).getName());
-        dayCell.appendChild(assignmentNumberText);
+        assignmentCell.appendChild(assignmentNumberText);
         
         
         Element brElement = scheduleDoc.createElement(HTML.Tag.BR.toString());
