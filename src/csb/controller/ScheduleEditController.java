@@ -201,9 +201,11 @@ public class ScheduleEditController {
         if (ad.wasCompleteSelected()) {
             // UPDATE THE SCHEDULE ITEM
             Assignment ai = ad.getAssignment();
-            assignment.setName(ai.getName());
-            assignment.setDate(ai.getDate());
-            assignment.setTopics(ai.getTopics());
+            //assignment.setName(ai.getName());
+            //assignment.setDate(ai.getDate());
+            //assignment.setTopics(ai.getTopics());
+            course.removeAssignment(assignment);
+            course.addAssignment(ai);
         }
         else {
             // THE USER MUST HAVE PRESSED CANCEL, SO
