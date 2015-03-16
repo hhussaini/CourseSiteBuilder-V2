@@ -357,6 +357,8 @@ public class CourseSiteExporter {
         int lectureNum = 0;
         List<DayOfWeek> lectureList = courseToExport.getLectureDays();
         List<Lecture> lectures = courseToExport.getLectures();
+        List<Assignment> assignments = courseToExport.getAssignments();
+        int assignmentNum = 0;
         int sessionNum = lectures.get(0).getSessions();
         
         HashMap<LocalDate, ScheduleItem> scheduleItemMappings = courseToExport.getScheduleItemMappings();
@@ -406,42 +408,66 @@ public class CourseSiteExporter {
                 } else {
                     // SET THE DATE TO A REGULAR DAY
                     dayCell.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_SCH);
-                }
-                
-                
-                              
-                //Where all the lectures are added
-                if (lectureNum < lectures.size())
-                {
-                                        
-                    if (sessionNum == 0)
+                    
+                    //Where all the lectures are added
+                    if (lectureNum < lectures.size())
                     {
-                        lectureNum++;
-                        if (lectureNum < lectures.size())
+                                        
+                        if (sessionNum == 0)
                         {
-                            sessionNum = lectures.get(lectureNum).getSessions();
+                            lectureNum++;
+                            if (lectureNum < lectures.size())
+                            {
+                                sessionNum = lectures.get(lectureNum).getSessions();
+                            }
                         }
+                    
+                        if (lectureList.contains(countingDate.getDayOfWeek()))
+                        {
+                            if (sessionNum != 0)
+                            {
+                                addLectureCell(scheduleDoc, dowRowElement, lectureCounter, dayCell);
+        
+                                // ADD THE TEXT TO THE LINK
+                                Text lectureText = scheduleDoc.createTextNode(lectures.get(lectureNum).getTopic());
+                                dayCell.appendChild(lectureText);
+                                sessionNum--;
+                                dayCell.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_SCH);
+                                lectureCounter++;
+                                Element brElement1 = scheduleDoc.createElement(HTML.Tag.BR.toString());
+                                dayCell.appendChild(brElement1);
+                            }
+                   
+                        }
+                                    
                     }
                     
-                    if (lectureList.contains(countingDate.getDayOfWeek()))
+                    if (assignmentNum < assignments.size())
                     {
-                        if (sessionNum != 0)
+                        if (assignments.get(assignmentNum).getDate().getDayOfMonth() == countingDate.getDayOfMonth() && assignments.get(assignmentNum).getDate().getMonthValue() == countingDate.getMonthValue())
                         {
-                            addLectureCell(scheduleDoc, dowRowElement, lectureCounter, dayCell);
-        
-                            // ADD THE TEXT TO THE LINK
-                            Text lectureText = scheduleDoc.createTextNode(lectures.get(lectureNum).getTopic());
-                            dayCell.appendChild(lectureText);
-                            sessionNum--;
+                            addAssignmentCell(scheduleDoc, dowRowElement, assignmentNum, dayCell, assignments);
+                            Text assignmentDateText = scheduleDoc.createTextNode("due @ 11:59pm");
+                            Text assignmentText = scheduleDoc.createTextNode("(" + assignments.get(assignmentNum).getTopics() + ")");
+                            dayCell.appendChild(assignmentDateText);
+                            Element brElement3 = scheduleDoc.createElement(HTML.Tag.BR.toString());
+                            dayCell.appendChild(brElement3);
+                            dayCell.appendChild(assignmentText);                    
                             dayCell.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_SCH);
-                            lectureCounter++;
+                            assignmentNum++;
                         }
-                   
+                        
+                       
                     }
-                                    
+                    
+                    
+                    
+                    
+                    
+                    
                 }
-                               
-                // FIRST SCHEDULE ITEMS
+                
+               // FIRST SCHEDULE ITEMS
                 countingDate = countingDate.plusDays(1);
             }
 
@@ -610,8 +636,8 @@ public class CourseSiteExporter {
 
         
         // THE TEXT FOR THE DATE IS BOLD, SO ADD A STRONG ELEMENT
-        Element span = scheduleDoc.createElement(HTML.Tag.SPAN.toString());
-        dayCell.appendChild(span);
+        Element strong = scheduleDoc.createElement(HTML.Tag.STRONG.toString());
+        dayCell.appendChild(strong);
 
         // AND PUT THE TEXT INSIDE
         Text lectureNumberText = scheduleDoc.createTextNode("Lecture " + x);
@@ -686,8 +712,6 @@ public class CourseSiteExporter {
             
         }
         
-   
-        
     }
     
     //Helps in filling homework table
@@ -702,8 +726,35 @@ public class CourseSiteExporter {
         }
         return null;
     }
-  
+    
    
+    private void addAssignmentCell(Document scheduleDoc, Element tableRow, int x, Element dayCell, List<Assignment> assignments)
+    {
+        // MAKE THE TABLE CELL FOR THIS DATE
+        //Element lectureCell = scheduleDoc.createElement(HTML.Tag.TD.toString());
+        dayCell.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_SCH);
+        dayCell.setAttribute(HTML.Attribute.ID.toString(), assignments.get(x).getName());
+        tableRow.appendChild(dayCell);
+
+        
+        // THE TEXT FOR THE DATE IS BOLD, SO ADD A STRONG ELEMENT
+        Element strong = scheduleDoc.createElement(HTML.Tag.STRONG.toString());
+        dayCell.appendChild(strong);
+
+        // AND PUT THE TEXT INSIDE
+        Text assignmentNumberText = scheduleDoc.createTextNode(assignments.get(x).getName());
+        dayCell.appendChild(assignmentNumberText);
+        
+        
+        Element brElement = scheduleDoc.createElement(HTML.Tag.BR.toString());
+        dayCell.appendChild(brElement);
+
+        // AND RETURN THE NEW ELEMENT
+
+         
+    }
+    
+    
         
     
 }
