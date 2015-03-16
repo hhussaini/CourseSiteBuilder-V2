@@ -354,6 +354,11 @@ public class CourseSiteExporter {
     private void fillScheduleTable(Document scheduleDoc, Course courseToExport) {
         LocalDate countingDate = courseToExport.getStartingMonday().minusDays(0);
         int lectureCounter = 1;
+        int lectureNum = 0;
+        List<DayOfWeek> lectureList = courseToExport.getLectureDays();
+        List<Lecture> lectures = courseToExport.getLectures();
+        int sessionNum = lectures.get(0).getSessions();
+        
         HashMap<LocalDate, ScheduleItem> scheduleItemMappings = courseToExport.getScheduleItemMappings();
 
         while (countingDate.isBefore(courseToExport.getEndingFriday())
@@ -404,30 +409,31 @@ public class CourseSiteExporter {
                 }
                 
                 
-                List<DayOfWeek> lectureList = courseToExport.getLectureDays();
-                List<Lecture> lectures = courseToExport.getLectures();
-                
-                                
-                if (!lectures.isEmpty())
+                              
+                //Where all the lectures are added
+                if (lectureNum < lectures.size())
                 {
-                    int sessionNum = lectures.get(0).getSessions();
-                
+                                        
                     if (sessionNum == 0)
                     {
-                        lectures.remove(lectures.get(0));
+                        lectureNum++;
+                        if (lectureNum < lectures.size())
+                        {
+                            sessionNum = lectures.get(lectureNum).getSessions();
+                        }
                     }
                     
                     if (lectureList.contains(countingDate.getDayOfWeek()))
                     {
                         if (sessionNum != 0)
                         {
-                            Element lectureCell = addLectureCell(scheduleDoc, dowRowElement, lectureCounter);
+                            addLectureCell(scheduleDoc, dowRowElement, lectureCounter, dayCell);
         
                             // ADD THE TEXT TO THE LINK
-                            Text lectureText = scheduleDoc.createTextNode(lectures.get(0).getTopic());
-                            lectureCell.appendChild(lectureText);
-                            lectures.get(0).setSessions(sessionNum-1);
-                            lectureCell.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_SCH);
+                            Text lectureText = scheduleDoc.createTextNode(lectures.get(lectureNum).getTopic());
+                            dayCell.appendChild(lectureText);
+                            sessionNum--;
+                            dayCell.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_SCH);
                             lectureCounter++;
                         }
                    
@@ -448,6 +454,8 @@ public class CourseSiteExporter {
             scheduleTableNode.appendChild(dowRowElement);
 
         }
+        
+       
     }
 
     // ADDS A DAY OF WEEK CELL TO THE SCHEDULE PAGE SCHEDULE TABLE
@@ -591,29 +599,34 @@ public class CourseSiteExporter {
         }
     }
     
-    
-    private Element addLectureCell(Document scheduleDoc, Element tableRow, int x)
+    //Method created in order to help in adding lectures
+    private void addLectureCell(Document scheduleDoc, Element tableRow, int x, Element dayCell)
     {
         // MAKE THE TABLE CELL FOR THIS DATE
-        Element lectureCell = scheduleDoc.createElement(HTML.Tag.TD.toString());
-        lectureCell.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_SCH);
-        lectureCell.setAttribute(HTML.Attribute.ID.toString(), "Lecture " + x);
-        tableRow.appendChild(lectureCell);
+        //Element lectureCell = scheduleDoc.createElement(HTML.Tag.TD.toString());
+        dayCell.setAttribute(HTML.Attribute.CLASS.toString(), CLASS_LECTURE);
+        dayCell.setAttribute(HTML.Attribute.ID.toString(), "Lecture " + x);
+        tableRow.appendChild(dayCell);
 
         
         // THE TEXT FOR THE DATE IS BOLD, SO ADD A STRONG ELEMENT
         Element span = scheduleDoc.createElement(HTML.Tag.SPAN.toString());
-        lectureCell.appendChild(span);
+        dayCell.appendChild(span);
 
         // AND PUT THE TEXT INSIDE
         Text lectureNumberText = scheduleDoc.createTextNode("Lecture " + x);
-        lectureCell.appendChild(lectureNumberText);
+        dayCell.appendChild(lectureNumberText);
+        
+        
+        Element brElement = scheduleDoc.createElement(HTML.Tag.BR.toString());
+        dayCell.appendChild(brElement);
 
         // AND RETURN THE NEW ELEMENT
-        return lectureCell;
+
          
     }
     
+    //Fills the entire homework table
     private void fillHomeworkTable(Document hwsDoc, Course courseToExport) 
     {
                
@@ -677,6 +690,7 @@ public class CourseSiteExporter {
         
     }
     
+    //Helps in filling homework table
     private Node getNodeWithClass(Document doc, String tagType, String searchID) {
         NodeList nodes = doc.getElementsByTagName(tagType);
         for (int i = 0; i < nodes.getLength(); i++) {
