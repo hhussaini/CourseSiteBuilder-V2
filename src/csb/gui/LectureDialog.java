@@ -20,6 +20,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import properties_manager.PropertiesManager;
 import csb.data.Lecture;
+import javafx.event.EventType;
 import javafx.scene.control.ComboBox;
 
 /**
@@ -104,13 +105,13 @@ public class LectureDialog  extends Stage {
         completeButton.setOnAction(completeCancelHandler);
         cancelButton.setOnAction(completeCancelHandler);
         
-        
+     
         
         sessionComboBox = new ComboBox();
         sessionComboBox.getItems().addAll("1", "2", "3");
         sessionComboBox.setValue(1);
-        sessionComboBox.setOnAction(e -> {
-            lecture.setSessions(Integer.parseInt(sessionComboBox.getSelectionModel().getSelectedItem().toString()));
+        sessionComboBox.setOnAction(e -> {   
+            lecture.setSessions(Integer.parseInt(sessionComboBox.getSelectionModel().getSelectedItem().toString()));           
         });
         
 
@@ -163,6 +164,7 @@ public class LectureDialog  extends Stage {
         
         // LOAD THE UI STUFF
         descriptionTextField.setText(lecture.getTopic());
+        sessionComboBox.setValue(1);
      
        // AND OPEN IT UP
         this.showAndWait();
@@ -186,7 +188,8 @@ public class LectureDialog  extends Stage {
         // LOAD THE SCHEDULE ITEM INTO OUR LOCAL OBJECT
         lecture = new Lecture();
         lecture.setTopic(lectureEdit.getTopic());
-              
+        lecture.setSessions(lectureEdit.getSessions());
+      
         // AND THEN INTO OUR GUI
         loadGUIData();
                
